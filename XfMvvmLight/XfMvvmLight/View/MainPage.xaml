@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:local="clr-namespace:XfMvvmLight"
+			 x:Class="XfMvvmLight.View.MainPage">
+
+
+	<ContentPage.BindingContext>
+		<Binding Path="MainVm" Source="{StaticResource Locator}" />
+	</ContentPage.BindingContext>
+
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="*"></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<Label Text="{Binding HelloWorldString}" Grid.Row="0" HorizontalOptions="FillAndExpand" Margin="6"/>
+
+		<Button Text="Get OS Version via DependencyService" Grid.Row="1" Command="{Binding GetOsVersionViaDsCommand}" HorizontalOptions="FillAndExpand" BorderColor="Blue" Margin="12"></Button>
+
+		<Label Grid.Row="2" Text="{Binding OsVersionViaDs}" HorizontalOptions="FillAndExpand" Margin="6"></Label>
+
+
+		<Button Text="Get OS Version via SimpleIoc and DS in VMLocator" Grid.Row="3" Command="{Binding GetOsVersionViaSimpleIocCommand}" HorizontalOptions="FillAndExpand" BorderColor="Blue" Margin="12"></Button>
+
+		<Label Grid.Row="4" Text="{Binding OsVersionViaSimpleIoc}" HorizontalOptions="FillAndExpand" Margin="6"></Label>
+
+
+
+	</Grid>
+	
+
+	
+	
+
+</ContentPage>

@@ -36,9 +36,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Abstractions\IOsVersionService.cs" />
+    <Compile Include="Abstractions\IXfNavigationService.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ServiceImplementations\XfNavigationService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\MainPage.xaml.cs">

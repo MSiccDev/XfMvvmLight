@@ -18,6 +18,8 @@
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
 
@@ -32,6 +34,10 @@
 
 		<Label Grid.Row="4" Text="{Binding OsVersionViaSimpleIoc}" HorizontalOptions="FillAndExpand" Margin="6"></Label>
 
+
+		<Button Text="show modal page" Grid.Row="5" Command="{Binding ShowModalPageCommand}" HorizontalOptions="FillAndExpand" BorderColor="Blue" Margin="12"></Button>
+
+		<Button Text="navigate to another page" Grid.Row="6" Command="{Binding NavigateToPageCommand}" HorizontalOptions="FillAndExpand" BorderColor="Blue" Margin="12"></Button>
 
 
 	</Grid>

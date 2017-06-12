@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,14 +13,22 @@ namespace XfMvvmLight.ServiceImplementations
     public class XfNavigationService : IXfNavigationService
     {
         private readonly Dictionary<string, Type> _pagesByKey = new Dictionary<string, Type>();
-        private NavigationPage _navigation;
+        private NavigationPage _navigationPage;
 
 
         //not using constructor injection here because in XF timing is always a problem
-        public void Initialize(NavigationPage navigation)
+        public void Initialize(NavigationPage navigationPage)
         {
-            _navigation = navigation;
+            _navigationPage = navigationPage;
         }
+
+
+
+
+
+
+
+
 
         public void Configure(string pageKey, Type pageType)
         {
@@ -38,12 +47,45 @@ namespace XfMvvmLight.ServiceImplementations
 
         public async Task GoHomeAsync()
         {
-            await _navigation.PopToRootAsync(true);
+            await _navigationPage.PopToRootAsync(true);
         }
 
 
+
+        public (bool isRegistered, bool isModal) StackContainsNavKey(string pageKey)
+        {
+            bool isRegistered = _pagesByKey.ContainsKey(pageKey);
+            bool isUsedModal = false;
+
+            if (isRegistered)
+            {
+                var pageType = _pagesByKey.SingleOrDefault(p => p.Key == pageKey).Value;
+
+                var foundInNavStack = _navigationPage.Navigation.NavigationStack.Any(p => p.GetType() == pageType);
+                var foundInModalStack = _navigationPage.Navigation.ModalStack.Any(p => p.GetType() == pageType);
+
+                if (foundInNavStack && !foundInModalStack || !foundInNavStack && !foundInModalStack)
+                {
+                    isUsedModal = false;
+                }
+                else if (foundInModalStack && !foundInNavStack)
+                {
+                    isUsedModal = true;
+                }
+                else
+                {
+                    throw new NotSupportedException("Pages should be used exclusively Modal or for Navigation");
+                }
+            }
+
+            return (isRegistered, isUsedModal);
+        }
+
+
+
+
         #region modal
-        public int ModalStackCount => Application.Current.MainPage.Navigation.ModalStack.Count;
+        public int ModalStackCount => _navigationPage.Navigation.ModalStack.Count;
 
         public string CurrentModalPageKey
         {
@@ -57,13 +99,10 @@ namespace XfMvvmLight.ServiceImplementations
                             return null;
                         }
 
-                        //no need to keep a second stack floating arround 
-                        //every XF App has a MainPage, which has the ModalStack in its Navigation property
-                        //pulling it into here is enough to achieve the functionality that is needed
-                        var pageType = Application.Current.MainPage.Navigation.ModalStack.Last().GetType();
+                        //only INavigation holds the ModalStack
+                        var pageType = _navigationPage.Navigation.ModalStack.Last().GetType();
 
-                        return _pagesByKey.ContainsValue(pageType)
-                            ? _pagesByKey.FirstOrDefault(p => p.Value == pageType).Key
+                        return _pagesByKey.ContainsValue(pageType) ? _pagesByKey.FirstOrDefault(p => p.Value == pageType).Key
                             : null;
                     }
                 }
@@ -72,7 +111,7 @@ namespace XfMvvmLight.ServiceImplementations
 
         public async Task GoBackModalAsync()
         {
-            await Application.Current.MainPage.Navigation.PopModalAsync(true);
+            await _navigationPage.Navigation.PopModalAsync(true);
         }
 
         public async Task ShowModalPageAsync(string pageKey, bool animated = true)
@@ -115,8 +154,7 @@ namespace XfMvvmLight.ServiceImplementations
 
                 var page = constructor.Invoke(parameters) as Page;
 
-                //showing modals on application level only
-                await Application.Current.MainPage.Navigation.PushModalAsync(page, animated);
+                await _navigationPage.Navigation.PushModalAsync(page, animated);
             }
             else
             {
@@ -128,18 +166,21 @@ namespace XfMvvmLight.ServiceImplementations
 
 
         #region navigation
+
+        public int NavigationStackCount => _navigationPage.Navigation.NavigationStack.Count;
+
         public string CurrentPageKey
         {
             get
             {
                 lock (_pagesByKey)
                 {
-                    if (_navigation?.CurrentPage == null)
+                    if (_navigationPage?.CurrentPage == null)
                     {
                         return null;
                     }
 
-                    var pageType = _navigation.CurrentPage.GetType();
+                    var pageType = _navigationPage.CurrentPage.GetType();
 
                     return _pagesByKey.ContainsValue(pageType)
                         ? _pagesByKey.First(p => p.Value == pageType).Key
@@ -150,12 +191,12 @@ namespace XfMvvmLight.ServiceImplementations
 
         public Page GetCurrentPage()
         {
-            return _navigation?.CurrentPage;
+            return _navigationPage?.CurrentPage;
         }
 
         public async Task GoBackAsync()
         {
-            await _navigation.PopAsync(true);
+            await _navigationPage.Navigation.PopAsync(true);
         }
 
         public async Task NavigateToAsync(string pageKey, bool animated = true)
@@ -201,7 +242,15 @@ namespace XfMvvmLight.ServiceImplementations
                 }
 
                 var page = constructor.Invoke(parameters) as Page;
-                await _navigation.PushAsync(page, animated);
+                if (_navigationPage != null)
+                {
+                    await _navigationPage.Navigation.PushAsync(page, animated);
+                }
+                else
+                {
+                    //todo:
+                    throw new NullReferenceException("there is no navigation page present, please check your page architecture and make sure you have called the Initialize Method before.");
+                }
             }
             else
             {

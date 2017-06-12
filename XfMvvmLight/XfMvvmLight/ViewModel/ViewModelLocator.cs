@@ -7,6 +7,8 @@ using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using XfMvvmLight.Abstractions;
 using Xamarin.Forms;
+using XfMvvmLight.View;
+using XfMvvmLight.ServiceImplementations;
 
 namespace XfMvvmLight.ViewModel
 {
@@ -19,11 +21,12 @@ namespace XfMvvmLight.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-
             RegisterServices();
 
 
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<ModalPageViewModel>();
+            SimpleIoc.Default.Register<NavigatedPageViewModel>();
 
         }
 
@@ -35,6 +38,22 @@ namespace XfMvvmLight.ViewModel
             // which can be used to register the service class with MVVMLight's Ioc
             SimpleIoc.Default.Register<IOsVersionService>(() => osService);
 
+            SimpleIoc.Default.Register<IXfNavigationService>(GetPageInstances);
+            SimpleIoc.Default.Register<IViewEventBrokerService, ViewEventBrokerService>();
+        }
+
+
+        public static XfNavigationService GetPageInstances()
+        {
+            var nav = new XfNavigationService();
+
+            //todo: configure pages, example:
+            //nav.Configure(nameof(MainPage), typeof(MainPage));
+
+            nav.Configure(ModalPageKey, typeof(ModalPage));
+            nav.Configure(NavigatedPageKey, typeof(NavigatedPage));
+
+            return nav;
         }
 
 
@@ -42,6 +61,9 @@ namespace XfMvvmLight.ViewModel
 
         #region ViewModels
         public MainViewModel MainVm => ServiceLocator.Current.GetInstance<MainViewModel>();
+        public ModalPageViewModel ModalPageVm => ServiceLocator.Current.GetInstance<ModalPageViewModel>();
+
+        public NavigatedPageViewModel NavigatedPageVm => ServiceLocator.Current.GetInstance<NavigatedPageViewModel>();
 
         #endregion
 
@@ -50,6 +72,9 @@ namespace XfMvvmLight.ViewModel
 
         #region PageKeys
 
+        public static string ModalPageKey => nameof(ModalPage);
+
+        public static string NavigatedPageKey => nameof(NavigatedPage);
 
         #endregion
     }

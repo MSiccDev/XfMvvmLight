@@ -14,7 +14,7 @@ namespace XfMvvmLight.Abstractions
 
         void Configure(string pageKey, Type pageType);
 
-
+        (bool isRegistered, bool isModal) StackContainsNavKey(string pageKey);
 
 
         Task GoHomeAsync();
@@ -35,7 +35,7 @@ namespace XfMvvmLight.Abstractions
 
 
 
-
+        int NavigationStackCount { get; }
 
         string CurrentPageKey { get; }
 

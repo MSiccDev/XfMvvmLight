@@ -1,9 +1,11 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Ioc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 using Xamarin.Forms;
+using XfMvvmLight.Abstractions;
 
 namespace XfMvvmLight
 {
@@ -13,8 +15,14 @@ namespace XfMvvmLight
         {
             InitializeComponent();
 
-            MainPage = new View.MainPage();
+
+            var rootNavigation = new NavigationPage(new View.MainPage());
+
+            MainPage = rootNavigation;
+
+            SimpleIoc.Default.GetInstance<IXfNavigationService>().Initialize(rootNavigation);
         }
+
 
         protected override void OnStart()
         {

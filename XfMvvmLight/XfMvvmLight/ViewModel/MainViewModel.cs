@@ -52,5 +52,26 @@ namespace XfMvvmLight.ViewModel
 
         }));
 
+
+
+        private RelayCommand _showModalPageCommand;
+
+        public RelayCommand ShowModalPageCommand => _showModalPageCommand ?? (_showModalPageCommand = new RelayCommand(async () =>
+        {
+            await SimpleIoc.Default.GetInstance<IXfNavigationService>().ShowModalPageAsync(ViewModelLocator.ModalPageKey, true);
+        }));
+
+
+
+        private RelayCommand _navigateToPageCommand;
+
+        public RelayCommand NavigateToPageCommand => _navigateToPageCommand ?? (_navigateToPageCommand = new RelayCommand(async () =>
+        {
+            await SimpleIoc.Default.GetInstance<IXfNavigationService>().NavigateToAsync(ViewModelLocator.NavigatedPageKey, true);
+        }));
+
+
+
+
     }
 }

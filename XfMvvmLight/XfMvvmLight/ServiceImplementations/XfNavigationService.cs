@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using XfMvvmLight.Abstractions;
@@ -15,6 +16,9 @@ namespace XfMvvmLight.ServiceImplementations
         private readonly Dictionary<string, Type> _pagesByKey = new Dictionary<string, Type>();
         private NavigationPage _navigationPage;
 
+        //using this instead of lock statement
+        private static SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+
 
         //not using constructor injection here because in XF timing is always a problem
         public void Initialize(NavigationPage navigationPage)
@@ -24,15 +28,11 @@ namespace XfMvvmLight.ServiceImplementations
 
 
 
-
-
-
-
-
-
         public void Configure(string pageKey, Type pageType)
         {
-            lock (_pagesByKey)
+            //synchronous lock
+            _lock.Wait();
+            try
             {
                 if (_pagesByKey.ContainsKey(pageKey))
                 {
@@ -42,6 +42,10 @@ namespace XfMvvmLight.ServiceImplementations
                 {
                     _pagesByKey.Add(pageKey, pageType);
                 }
+            }
+            finally
+            {
+                _lock.Release();
             }
         }
 
@@ -81,6 +85,10 @@ namespace XfMvvmLight.ServiceImplementations
             return (isRegistered, isUsedModal);
         }
 
+        public Page GetCurrentPage()
+        {
+            return _navigationPage?.CurrentPage;
+        }
 
 
 
@@ -91,20 +99,24 @@ namespace XfMvvmLight.ServiceImplementations
         {
             get
             {
+                _lock.Wait();
+
+                try
                 {
-                    lock (_pagesByKey)
+                    if (ModalStackCount == 1)
                     {
-                        if (ModalStackCount == 1)
-                        {
-                            return null;
-                        }
-
-                        //only INavigation holds the ModalStack
-                        var pageType = _navigationPage.Navigation.ModalStack.Last().GetType();
-
-                        return _pagesByKey.ContainsValue(pageType) ? _pagesByKey.FirstOrDefault(p => p.Value == pageType).Key
-                            : null;
+                        return null;
                     }
+
+                    //only INavigation holds the ModalStack
+                    var pageType = _navigationPage.Navigation.ModalStack.Last().GetType();
+
+                    return _pagesByKey.ContainsValue(pageType) ? _pagesByKey.FirstOrDefault(p => p.Value == pageType).Key
+                        : null;
+                }
+                finally
+                {
+                    _lock.Release();
                 }
             }
         }
@@ -121,44 +133,61 @@ namespace XfMvvmLight.ServiceImplementations
 
         public async Task ShowModalPageAsync(string pageKey, object parameter, bool animated = true)
         {
-            if (_pagesByKey.ContainsKey(pageKey))
+            await _lock.WaitAsync();
+
+            try
             {
-                var type = _pagesByKey[pageKey];
-                ConstructorInfo constructor = null;
-                object[] parameters = null;
 
-                if (parameter == null)
+                if (_pagesByKey.ContainsKey(pageKey))
                 {
-                    constructor = type.GetTypeInfo()
-                        .DeclaredConstructors
-                        .FirstOrDefault(c => !c.GetParameters().Any());
+                    var type = _pagesByKey[pageKey];
+                    ConstructorInfo constructor = null;
+                    object[] parameters = null;
 
-                    parameters = new object[]
+                    if (parameter == null)
                     {
-                    };
+                        constructor = type.GetTypeInfo()
+                            .DeclaredConstructors
+                            .FirstOrDefault(c => !c.GetParameters().Any());
+
+                        parameters = new object[]
+                        {
+                        };
+                    }
+                    else
+                    {
+                        constructor = type.GetTypeInfo()
+                            .DeclaredConstructors
+                            .FirstOrDefault(
+                                c =>
+                                {
+                                    return c.GetParameters().Count() == 1
+                                           && c.GetParameters()[0].ParameterType == parameter.GetType();
+                                });
+
+                        parameters = new[] { parameter };
+                    }
+
+
+                    var page = constructor.Invoke(parameters) as Page;
+
+                    if (_navigationPage != null)
+                    {
+                        await _navigationPage.Navigation.PushModalAsync(page, animated);
+                    }
+                    else
+                    {
+                        throw new NullReferenceException("there is no navigation page present, please check your page architecture and make sure you have called the Initialize Method before.");
+                    }
                 }
                 else
                 {
-                    constructor = type.GetTypeInfo()
-                        .DeclaredConstructors
-                        .FirstOrDefault(
-                            c =>
-                            {
-                                return c.GetParameters().Count() == 1
-                                       && c.GetParameters()[0].ParameterType == parameter.GetType();
-                            });
-
-                    parameters = new[] { parameter };
+                    throw new ArgumentException($"No page found with key: {pageKey}. Did you forget to call the Configure method?", nameof(pageKey));
                 }
-
-
-                var page = constructor.Invoke(parameters) as Page;
-
-                await _navigationPage.Navigation.PushModalAsync(page, animated);
             }
-            else
+            finally
             {
-                throw new ArgumentException($"No page found with key: {pageKey}. Did you forget to call the Configure method?", nameof(pageKey));
+                _lock.Release();
             }
         }
 
@@ -173,7 +202,8 @@ namespace XfMvvmLight.ServiceImplementations
         {
             get
             {
-                lock (_pagesByKey)
+                _lock.Wait();
+                try
                 {
                     if (_navigationPage?.CurrentPage == null)
                     {
@@ -186,13 +216,14 @@ namespace XfMvvmLight.ServiceImplementations
                         ? _pagesByKey.First(p => p.Value == pageType).Key
                         : null;
                 }
+                finally
+                {
+                    _lock.Release();
+                }
             }
         }
 
-        public Page GetCurrentPage()
-        {
-            return _navigationPage?.CurrentPage;
-        }
+
 
         public async Task GoBackAsync()
         {
@@ -206,59 +237,67 @@ namespace XfMvvmLight.ServiceImplementations
 
         public async Task NavigateToAsync(string pageKey, object parameter, bool animated = true)
         {
-            if (_pagesByKey.ContainsKey(pageKey))
+            await _lock.WaitAsync();
+
+            try
             {
-                var type = _pagesByKey[pageKey];
-                ConstructorInfo constructor = null;
-                object[] parameters = null;
 
-                if (parameter == null)
+                if (_pagesByKey.ContainsKey(pageKey))
                 {
-                    constructor = type.GetTypeInfo()
-                        .DeclaredConstructors
-                        .FirstOrDefault(c => !c.GetParameters().Any());
+                    var type = _pagesByKey[pageKey];
+                    ConstructorInfo constructor = null;
+                    object[] parameters = null;
 
-                    parameters = new object[]
+                    if (parameter == null)
                     {
-                    };
+                        constructor = type.GetTypeInfo()
+                            .DeclaredConstructors
+                            .FirstOrDefault(c => !c.GetParameters().Any());
+
+                        parameters = new object[]
+                        {
+                        };
+                    }
+                    else
+                    {
+                        constructor = type.GetTypeInfo()
+                            .DeclaredConstructors
+                            .FirstOrDefault(
+                                c =>
+                                {
+                                    return c.GetParameters().Count() == 1
+                                           && c.GetParameters()[0].ParameterType == parameter.GetType();
+                                });
+
+                        parameters = new[] { parameter };
+                    }
+
+                    if (constructor == null)
+                    {
+                        throw new InvalidOperationException("No constructor found for page " + pageKey);
+                    }
+
+                    var page = constructor.Invoke(parameters) as Page;
+                    if (_navigationPage != null)
+                    {
+                        await _navigationPage.Navigation.PushAsync(page, animated);
+                    }
+                    else
+                    {
+                        throw new NullReferenceException("there is no navigation page present, please check your page architecture and make sure you have called the Initialize Method before.");
+                    }
                 }
                 else
                 {
-                    constructor = type.GetTypeInfo()
-                        .DeclaredConstructors
-                        .FirstOrDefault(
-                            c =>
-                            {
-                                return c.GetParameters().Count() == 1
-                                       && c.GetParameters()[0].ParameterType == parameter.GetType();
-                            });
-
-                    parameters = new[] { parameter };
-                }
-
-                if (constructor == null)
-                {
-                    throw new InvalidOperationException("No constructor found for page " + pageKey);
-                }
-
-                var page = constructor.Invoke(parameters) as Page;
-                if (_navigationPage != null)
-                {
-                    await _navigationPage.Navigation.PushAsync(page, animated);
-                }
-                else
-                {
-                    //todo:
-                    throw new NullReferenceException("there is no navigation page present, please check your page architecture and make sure you have called the Initialize Method before.");
+                    throw new ArgumentException(
+                        $"No page with key: {pageKey}. Did you forget to call the Configure method?",
+                        nameof(pageKey));
                 }
             }
-            else
+            finally
             {
-                throw new ArgumentException(
-                    $"No page with key: {pageKey}. Did you forget to call the Configure method?",
-                    nameof(pageKey));
+                _lock.Release();
             }
-
         }
 
         #endregion

@@ -15,7 +15,6 @@ namespace XfMvvmLight.Abstractions
         void RaiseViewAppearing(string pageKey, Type pageType, bool isModal);
 
         void RaiseViewDisAppearing(string pageKey, Type pageType, bool isModal);
-
     }
 
 

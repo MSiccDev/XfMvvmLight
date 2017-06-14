@@ -21,8 +21,6 @@ namespace XfMvvmLight.View
         {
             InitializeComponent();
 
-            RegisteredPageKey = ViewModelLocator.NavigatedPageKey;
-
         }
 
 

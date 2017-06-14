@@ -1,14 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<baseCtrl:XfNavContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<baseCtrl:XfNavContentPage 
+             xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:baseCtrl="clr-namespace:XfMvvmLight.BaseControls;assembly=XfMvvmLight"
-             x:Class="XfMvvmLight.View.ModalPage">
+             x:Class="XfMvvmLight.View.ModalPage" 
+    RegisteredPageKey="{Binding CorrespondingViewKey}">
 
     <ContentPage.BindingContext>
         <Binding Path="ModalPageVm" Source="{StaticResource Locator}" />
     </ContentPage.BindingContext>
 
-    <ContentPage.Content>
+
+<ContentPage.Content>
         <StackLayout>
             <Label Text="I am a modal page!" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" FontSize="Large" />
             <Button Text="Go Back" HorizontalOptions="End" Command="{Binding GoBackCommand}"></Button>

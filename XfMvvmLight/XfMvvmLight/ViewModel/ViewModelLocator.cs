@@ -47,9 +47,6 @@ namespace XfMvvmLight.ViewModel
         {
             var nav = new XfNavigationService();
 
-            //todo: configure pages, example:
-            //nav.Configure(nameof(MainPage), typeof(MainPage));
-
             nav.Configure(ModalPageKey, typeof(ModalPage));
             nav.Configure(NavigatedPageKey, typeof(NavigatedPage));
 

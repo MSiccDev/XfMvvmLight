@@ -9,7 +9,10 @@ namespace XfMvvmLight.ViewModel
 {
     public class NavigatedPageViewModel :XfNavViewModelBase
     {
-
+        public NavigatedPageViewModel()
+        {
+            CorrespondingViewKey = ViewModelLocator.NavigatedPageKey;
+        }
 
 
         protected override void OnCorrespondingViewAppearing(object sender, ViewEventBrokerEventArgs e)

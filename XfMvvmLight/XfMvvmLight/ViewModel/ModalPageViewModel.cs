@@ -10,6 +10,11 @@ namespace XfMvvmLight.ViewModel
     public class ModalPageViewModel : XfNavViewModelBase
     {
 
+        public ModalPageViewModel()
+        {
+            CorrespondingViewKey = ViewModelLocator.ModalPageKey;
+        }
+
         protected override void OnCorrespondingViewAppearing(object sender, ViewEventBrokerEventArgs e)
         {
             base.OnCorrespondingViewAppearing(sender, e);
@@ -28,6 +33,8 @@ namespace XfMvvmLight.ViewModel
             await _navService.GoBackModalAsync();
         }));
 
+
+        
 
     }
 

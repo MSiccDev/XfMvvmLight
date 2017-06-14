@@ -33,17 +33,12 @@ namespace XfMvvmLight.ViewModel
         {
         }
 
-
-
         private string _correspondingViewKey;
 
         public string CorrespondingViewKey
         {
-            get { return _correspondingViewKey; }
-            set { Set(ref _correspondingViewKey, value);}
+            get => _correspondingViewKey; set => Set(ref _correspondingViewKey, value);
         }
-
-
 
         public bool IsBoundToModalView()
         {
@@ -58,15 +53,6 @@ namespace XfMvvmLight.ViewModel
             }
             return false;
         }
-
-
-
-
-
-
-
-
-
-
+        
     }
 }

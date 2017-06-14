@@ -58,28 +58,44 @@ namespace XfMvvmLight.ServiceImplementations
 
         public (bool isRegistered, bool isModal) StackContainsNavKey(string pageKey)
         {
-            bool isRegistered = _pagesByKey.ContainsKey(pageKey);
+
             bool isUsedModal = false;
+            bool isRegistered = false;
 
-            if (isRegistered)
+            _lock.Wait();
+            try
             {
-                var pageType = _pagesByKey.SingleOrDefault(p => p.Key == pageKey).Value;
+                isRegistered = _pagesByKey.ContainsKey(pageKey);
 
-                var foundInNavStack = _navigationPage.Navigation.NavigationStack.Any(p => p.GetType() == pageType);
-                var foundInModalStack = _navigationPage.Navigation.ModalStack.Any(p => p.GetType() == pageType);
 
-                if (foundInNavStack && !foundInModalStack || !foundInNavStack && !foundInModalStack)
+                if (isRegistered)
                 {
-                    isUsedModal = false;
-                }
-                else if (foundInModalStack && !foundInNavStack)
-                {
-                    isUsedModal = true;
+                    var pageType = _pagesByKey.SingleOrDefault(p => p.Key == pageKey).Value;
+
+                    var foundInNavStack = _navigationPage.Navigation.NavigationStack.Any(p => p.GetType() == pageType);
+                    var foundInModalStack = _navigationPage.Navigation.ModalStack.Any(p => p.GetType() == pageType);
+
+                    if (foundInNavStack && !foundInModalStack || !foundInNavStack && !foundInModalStack)
+                    {
+                        isUsedModal = false;
+                    }
+                    else if (foundInModalStack && !foundInNavStack)
+                    {
+                        isUsedModal = true;
+                    }
+                    else
+                    {
+                        throw new NotSupportedException("Pages should be used exclusively Modal or for Navigation");
+                    }
                 }
                 else
                 {
-                    throw new NotSupportedException("Pages should be used exclusively Modal or for Navigation");
+                    throw new ArgumentException($"No page with key: {pageKey}. Did you forget to call the Configure method?", nameof(pageKey));
                 }
+            }
+            finally
+            {
+                _lock.Release();
             }
 
             return (isRegistered, isUsedModal);
@@ -128,7 +144,7 @@ namespace XfMvvmLight.ServiceImplementations
 
         public async Task ShowModalPageAsync(string pageKey, bool animated = true)
         {
-            await ShowModalPageAsync(pageKey, null);
+            await ShowModalPageAsync(pageKey, null, animated);
         }
 
         public async Task ShowModalPageAsync(string pageKey, object parameter, bool animated = true)
@@ -232,7 +248,7 @@ namespace XfMvvmLight.ServiceImplementations
 
         public async Task NavigateToAsync(string pageKey, bool animated = true)
         {
-            await NavigateToAsync(pageKey, null);
+            await NavigateToAsync(pageKey, null, animated);
         }
 
         public async Task NavigateToAsync(string pageKey, object parameter, bool animated = true)

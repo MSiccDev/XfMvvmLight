@@ -23,7 +23,7 @@ namespace XfMvvmLight.BaseControls
         }
 
 
-        BindableProperty RegisteredPageKeyProperty = BindableProperty.Create("RegisteredPageKey", typeof(string), typeof(XfNavContentPage), default(string), BindingMode.Default, propertyChanged: OnRegisteredPageKeyChanged);
+        public static BindableProperty RegisteredPageKeyProperty = BindableProperty.Create("RegisteredPageKey", typeof(string), typeof(XfNavContentPage), default(string), BindingMode.Default, propertyChanged: OnRegisteredPageKeyChanged);
 
         private static void OnRegisteredPageKeyChanged(BindableObject bindable, object oldValue, object newValue)
         {

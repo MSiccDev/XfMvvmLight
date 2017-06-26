@@ -64,14 +64,19 @@ namespace XfMvvmLight.UWP
 
                 //modified for .NET Compile
                 //see https://developer.xamarin.com/guides/xamarin-forms/platform-features/windows/installation/universal/#Target_Invocation_Exception_when_using_Compile_with_.NET_Native_tool_chain
-                List<Assembly> assembliesToInclude = new List<Assembly>();
-                assembliesToInclude.Add(typeof(OsVersionService).GetTypeInfo().Assembly);
+                List<Assembly> assembliesToInclude =
+                    new List<Assembly>
+                    {
+                        typeof(OsVersionService).GetTypeInfo().Assembly,
+                        typeof(PlatformDialogService).GetTypeInfo().Assembly
+                    };
 
                 Xamarin.Forms.Forms.Init(e, assembliesToInclude);
 
                 //manually register for DependencyService 
                 //AFTER Forms is initialized but BEFORE VMLocator is initialized:
                 Xamarin.Forms.DependencyService.Register<OsVersionService>();
+                Xamarin.Forms.DependencyService.Register<PlatformDialogService>();
 
                 ViewModelLocator.Instance.Initialize();
 

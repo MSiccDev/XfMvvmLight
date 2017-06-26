@@ -9,9 +9,15 @@
 		<Binding Path="MainVm" Source="{StaticResource Locator}" />
 	</ContentPage.BindingContext>
 
-
+<ScrollView>
 	<Grid>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
@@ -39,11 +45,20 @@
 
 		<Button Text="navigate to another page" Grid.Row="6" Command="{Binding NavigateToPageCommand}" HorizontalOptions="FillAndExpand" BorderColor="Blue" Margin="12"></Button>
 
+		
+
+		<Button Text="Show error message" Grid.Row="7" Command="{Binding ShowErrorCommand}" HorizontalOptions="FillAndExpand" BorderColor="Blue" Margin="12"></Button>
+
+		<Button Text="Show exception message" Grid.Row="8" Command="{Binding ShowErrorWithExceptionCommand}" HorizontalOptions="FillAndExpand" BorderColor="Blue" Margin="12"></Button>
+
+		<Button Text="Show selection message" Grid.Row="9" Command="{Binding ShowSelectionCommand}" HorizontalOptions="FillAndExpand" BorderColor="Blue" Margin="12"></Button>
+
+
 
 	</Grid>
-	
+</ScrollView>
 
-	
-	
+
+
 
 </ContentPage>

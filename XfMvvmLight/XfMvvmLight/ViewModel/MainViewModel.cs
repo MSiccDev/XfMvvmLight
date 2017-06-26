@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,6 +73,67 @@ namespace XfMvvmLight.ViewModel
 
 
 
+
+
+
+
+        private RelayCommand _showErrorCommand;
+
+        public RelayCommand ShowErrorCommand => _showErrorCommand ?? (_showErrorCommand = new RelayCommand(async () =>
+        {
+            await SimpleIoc.Default.GetInstance<IDialogService>().ShowMessageAsync("Hey...", "You clicked a button you shouldn't click", "Sorry",
+                returnValue =>
+                {
+                    Debug.WriteLine($"{nameof(ShowErrorCommand)}'s dialog returns: {returnValue}");
+                }, false, false);
+        }));
+
+
+
+
+
+        private RelayCommand _showErrorWithExceptionCommand;
+
+        public RelayCommand ShowErrorWithExceptionCommand => _showErrorWithExceptionCommand ?? (_showErrorWithExceptionCommand = new RelayCommand(async () =>
+        {
+            try
+            {
+                throw new NotSupportedException("You tried to fool me, which is not supported!");
+            }
+            catch (Exception ex)
+            {
+                await SimpleIoc.Default.GetInstance<IDialogService>().ShowErrorAsync("Error", ex, "Sorry",
+                    returnValue =>
+                    {
+                        Debug.WriteLine($"{nameof(ShowErrorWithExceptionCommand)}'s dialog returns: {returnValue}");
+                    }, false, false);
+            }
+        })); 
+
+
+
+        private RelayCommand _showSelectionCommand;
+
+        public RelayCommand ShowSelectionCommand => _showSelectionCommand ?? (_showSelectionCommand = new RelayCommand(async () =>
+        {
+
+            await SimpleIoc.Default.GetInstance<IDialogService>().ShowMessageAsync("Question:",
+                "Do you enjoy this blog series about MVVMLight and Xamarin Forms?", "yeah!", "nope", async returnvalue =>
+                {
+                    if (returnvalue)
+                    {
+                        await SimpleIoc.Default.GetInstance<IDialogService>()
+                            .ShowMessageAsync("Awesome!", "I am glad you like it");
+                    }
+                    else
+                    {
+                        await SimpleIoc.Default.GetInstance<IDialogService>()
+                            .ShowMessageAsync("Oh no...", "Maybe you could send me some feedback on how to improve it?");
+                    }
+                },
+                false, false);
+
+        }));
 
     }
 }

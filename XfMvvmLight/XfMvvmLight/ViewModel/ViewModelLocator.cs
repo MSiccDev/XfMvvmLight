@@ -38,8 +38,15 @@ namespace XfMvvmLight.ViewModel
             // which can be used to register the service class with MVVMLight's Ioc
             SimpleIoc.Default.Register<IOsVersionService>(() => osService);
 
+            //aaaand... we did it again ;-)
+            var dialogService = DependencyService.Get<IDialogService>();
+            SimpleIoc.Default.Register<IDialogService>(() => dialogService);
+
+
             SimpleIoc.Default.Register<IXfNavigationService>(GetPageInstances);
             SimpleIoc.Default.Register<IViewEventBrokerService, ViewEventBrokerService>();
+
+
         }
 
 

@@ -189,7 +189,10 @@ namespace XfMvvmLight.ServiceImplementations
 
                     if (_navigationPage != null)
                     {
-                        await _navigationPage.Navigation.PushModalAsync(page, animated);
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            await _navigationPage.Navigation.PushModalAsync(page, animated);
+                        });
                     }
                     else
                     {
@@ -296,7 +299,10 @@ namespace XfMvvmLight.ServiceImplementations
                     var page = constructor.Invoke(parameters) as Page;
                     if (_navigationPage != null)
                     {
-                        await _navigationPage.Navigation.PushAsync(page, animated);
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            await _navigationPage.Navigation.PushAsync(page, animated);
+                        });
                     }
                     else
                     {

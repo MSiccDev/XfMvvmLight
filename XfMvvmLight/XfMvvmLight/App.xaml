@@ -10,7 +10,8 @@
   <Application.Resources>
     <!-- Application resource dictionary -->
     <forms:ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-      <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
+        
+      <vm:ViewModelLocator x:Key="Locator" />
     </forms:ResourceDictionary>
   </Application.Resources>
 </Application>

@@ -92,10 +92,5 @@ namespace XfMvvmLight.Droid.PlatformImplementation
             });
         }
 
-
-
-
-
-
     }
 }

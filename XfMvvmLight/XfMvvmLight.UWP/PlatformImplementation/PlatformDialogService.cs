@@ -53,13 +53,24 @@ namespace XfMvvmLight.UWP.PlatformImplementation
                 var messageDialog = new ContentDialog()
                 {
                     Title = title,
-                    Content = content,
-
-                    DefaultButton = ContentDialogButton.Primary
+                    Content = content,                    
                 };
 
 
-                if (!string.IsNullOrEmpty(confirmButtonText))
+            if (!string.IsNullOrEmpty(confirmButtonText))
+            {
+
+                if (string.IsNullOrEmpty(cancelButtonText))
+                {
+                    messageDialog.CloseButtonText = confirmButtonText;
+
+                    messageDialog.CloseButtonClick += (sender, e) =>
+                    {
+                        callback?.Invoke(true);
+                        _openDialogs.Remove((ContentDialog)sender);
+                    };
+                }
+                else
                 {
                     messageDialog.PrimaryButtonText = confirmButtonText;
 
@@ -68,25 +79,21 @@ namespace XfMvvmLight.UWP.PlatformImplementation
                         callback?.Invoke(true);
                         _openDialogs.Remove((ContentDialog)sender);
                     };
+
                 }
+            }
 
                 if (!string.IsNullOrEmpty(cancelButtonText))
                 {
-                    messageDialog.SecondaryButtonText = cancelButtonText;
+                    messageDialog.CloseButtonText = cancelButtonText;
 
-                    messageDialog.SecondaryButtonClick += (sender, e) =>
+                    messageDialog.CloseButtonClick += (sender, e) =>
                     {
                         callback?.Invoke(false);
                         _openDialogs.Remove((ContentDialog)sender);
                     };
                 }
 
-
-                messageDialog.CloseButtonClick += (sender, e) =>
-                {
-                    callback?.Invoke(false);
-                    _openDialogs.Remove((ContentDialog)sender);
-                };
 
             Device.BeginInvokeOnMainThread(async () =>
             {

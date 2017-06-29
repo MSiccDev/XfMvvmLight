@@ -14,7 +14,6 @@ namespace XfMvvmLight.iOS.PlatformImplementation
 
         List<UIAlertController> _openDialogs = new List<UIAlertController>();
 
-
         public void CloseAllDialogs()
         {
             foreach (var dialog in _openDialogs)
@@ -59,36 +58,34 @@ namespace XfMvvmLight.iOS.PlatformImplementation
 
         internal void ShowAlert(string title, string content, string confirmButtonText = null, string cancelButtonText = null, Action<bool> callback = null, bool cancelableOnTouchOutside = false, bool cancelable = false)
         {
+            //all this code needs to be in here because UIKit demands the main UI Thread
             Device.BeginInvokeOnMainThread(() =>
             {
                 var dialogAlert = UIAlertController.Create(title, content, UIAlertControllerStyle.Alert);
 
-            var okAction = UIAlertAction.Create(!string.IsNullOrEmpty(confirmButtonText) ? confirmButtonText : "OK", UIAlertActionStyle.Default, _ =>
-            {
-                callback?.Invoke(true);
-                _openDialogs.Remove(dialogAlert);
-            });
-            dialogAlert.AddAction(okAction);
-
-
-            if (!string.IsNullOrEmpty(cancelButtonText))
-            {
-                var cancelAction = UIAlertAction.Create(cancelButtonText, UIAlertActionStyle.Cancel, _ => {
-                    callback?.Invoke(false);
+                var okAction = UIAlertAction.Create(!string.IsNullOrEmpty(confirmButtonText) ? confirmButtonText : "OK", UIAlertActionStyle.Default, _ =>
+                {
+                    callback?.Invoke(true);
                     _openDialogs.Remove(dialogAlert);
+                });
+                dialogAlert.AddAction(okAction);
+
+
+                if (!string.IsNullOrEmpty(cancelButtonText))
+                {
+                    var cancelAction = UIAlertAction.Create(cancelButtonText, UIAlertActionStyle.Cancel, _ =>
+                    {
+                        callback?.Invoke(false);
+                        _openDialogs.Remove(dialogAlert);
                     });
-                dialogAlert.AddAction(cancelAction);
-            }
-                       
-
-
+                    dialogAlert.AddAction(cancelAction);
+                }
                 _openDialogs.Add(dialogAlert);
 
                 var rootController = UIApplication.SharedApplication.KeyWindow.RootViewController;
 
                 rootController.PresentViewController(dialogAlert, true, null);
             });
-
         }
 
 

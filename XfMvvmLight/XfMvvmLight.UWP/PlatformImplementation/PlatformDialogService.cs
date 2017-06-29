@@ -28,28 +28,30 @@ namespace XfMvvmLight.UWP.PlatformImplementation
 
         public async Task ShowErrorAsync(string title, Exception error, string buttonText, Action<bool> closeAction, bool cancelableOnTouchOutside = false, bool cancelable = false)
         {
-            await ShowContentDialog(title, error.ToString(), buttonText, null, closeAction, cancelableOnTouchOutside, cancelable);
+            await Task.Run(() => { ShowContentDialog(title, error.ToString(), buttonText, null, closeAction, cancelableOnTouchOutside, cancelable); });
         }
 
         public async Task ShowMessageAsync(string title, string message)
         {
-            await ShowContentDialog(title, message, "OK", null, null, false, false);
+            await Task.Run(() => { ShowContentDialog(title, message, "OK", null, null, false, false); });
         }
 
         public async Task ShowMessageAsync(string title, string message, string buttonText, Action<bool> closeAction, bool cancelableOnTouchOutside = false, bool cancelable = false)
         {
-            await ShowContentDialog(title, message, buttonText, null, closeAction, cancelableOnTouchOutside, cancelable);
+            await Task.Run(() => { ShowContentDialog(title, message, buttonText, null, closeAction, cancelableOnTouchOutside, cancelable); });
         }
 
         public async Task ShowMessageAsync(string title, string message, string buttonConfirmText, string buttonCancelText, Action<bool> closeAction, bool cancelableOnTouchOutside = false, bool cancelable = false)
         {
-            await ShowContentDialog(title, message, buttonConfirmText, buttonCancelText, closeAction, cancelableOnTouchOutside, cancelable);
+            await Task.Run(() => { ShowContentDialog(title, message, buttonConfirmText, buttonCancelText, closeAction, cancelableOnTouchOutside, cancelable); });
         }
 
 
 
-        internal async Task ShowContentDialog(string title, string content, string confirmButtonText = null, string cancelButtonText = null, Action<bool> callback = null, bool cancelableOnTouchOutside = false, bool cancelable = false)
+        internal void ShowContentDialog(string title, string content, string confirmButtonText = null, string cancelButtonText = null, Action<bool> callback = null, bool cancelableOnTouchOutside = false, bool cancelable = false)
         {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
                 var messageDialog = new ContentDialog()
                 {
                     Title = title,
@@ -95,8 +97,7 @@ namespace XfMvvmLight.UWP.PlatformImplementation
                 }
 
 
-            Device.BeginInvokeOnMainThread(async () =>
-            {
+
                 _openDialogs.Add(messageDialog);
 
                 await messageDialog.ShowAsync();

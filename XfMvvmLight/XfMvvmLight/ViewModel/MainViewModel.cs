@@ -77,15 +77,11 @@ namespace XfMvvmLight.ViewModel
 
 
 
-        private RelayCommand _showErrorCommand;
+        private RelayCommand _showMessageCommand;
 
-        public RelayCommand ShowErrorCommand => _showErrorCommand ?? (_showErrorCommand = new RelayCommand(async () =>
+        public RelayCommand ShowMessageCommand => _showMessageCommand ?? (_showMessageCommand = new RelayCommand(async () =>
         {
-            await SimpleIoc.Default.GetInstance<IDialogService>().ShowMessageAsync("Hey...", "You clicked a button you shouldn't click", "Sorry",
-                returnValue =>
-                {
-                    Debug.WriteLine($"{nameof(ShowErrorCommand)}'s dialog returns: {returnValue}");
-                }, false, false);
+            await SimpleIoc.Default.GetInstance<IDialogService>().ShowMessageAsync("Cool... 😎", "You really clicked this button!");
         }));
 
 

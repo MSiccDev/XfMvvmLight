@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,11 @@ namespace XfMvvmLight.ViewModel
     public class XfNavViewModelBase : ViewModelBase
     {
         protected readonly IXfNavigationService _navService;
-
         protected readonly IViewEventBrokerService _viewEventBroker;
+
+        private string _correspondingViewKey;
+        private RelayCommand _viewAppearingCommand;
+        private RelayCommand _viewDisappearingCommand;
 
 
         public XfNavViewModelBase()
@@ -33,7 +37,40 @@ namespace XfMvvmLight.ViewModel
         {
         }
 
-        private string _correspondingViewKey;
+
+
+
+
+
+        public RelayCommand ViewAppearingCommand => _viewAppearingCommand ?? (_viewAppearingCommand = new RelayCommand(ExecuteViewAppearingCommand, CanExecuteViewAppearingCommand));
+
+        public virtual void ExecuteViewAppearingCommand()
+        {
+
+        }
+
+        public virtual bool CanExecuteViewAppearingCommand()
+        {
+            return true;
+        }
+
+
+
+
+
+        public RelayCommand ViewDisappearingCommand => _viewDisappearingCommand ?? (_viewDisappearingCommand = new RelayCommand(ExecuteViewDisappearingCommand, CanExecuteViewDisappearingCommand));
+
+        public virtual void ExecuteViewDisappearingCommand()
+        {
+
+        }
+
+        public virtual bool CanExecuteViewDisappearingCommand()
+        {
+            return true;
+        }
+
+
 
         public string CorrespondingViewKey
         {

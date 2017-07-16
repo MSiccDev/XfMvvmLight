@@ -14,6 +14,13 @@ namespace XfMvvmLight.View
         public ModalPage()
         {
             InitializeComponent();
+
+        }
+
+        //demo hack only!
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
         }
 
 

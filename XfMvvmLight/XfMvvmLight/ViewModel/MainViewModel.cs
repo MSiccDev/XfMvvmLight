@@ -14,6 +14,16 @@ namespace XfMvvmLight.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
+        private IDialogService _dialogService;
+        private IXfNavigationService _navigationService;
+
+        public MainViewModel()
+        {
+           _dialogService = SimpleIoc.Default.GetInstance<IDialogService>();
+            _navigationService = SimpleIoc.Default.GetInstance<IXfNavigationService>();
+        }
+
+
 
         public string HelloWorldString { get; private set; } = "Hello from Xamarin Forms with MVVM Light";
 
@@ -59,7 +69,7 @@ namespace XfMvvmLight.ViewModel
 
         public RelayCommand ShowModalPageCommand => _showModalPageCommand ?? (_showModalPageCommand = new RelayCommand(async () =>
         {
-            await SimpleIoc.Default.GetInstance<IXfNavigationService>().ShowModalPageAsync(ViewModelLocator.ModalPageKey, true);
+            await _navigationService.ShowModalPageAsync(ViewModelLocator.ModalPageKey, true);
         }));
 
 
@@ -68,7 +78,7 @@ namespace XfMvvmLight.ViewModel
 
         public RelayCommand NavigateToPageCommand => _navigateToPageCommand ?? (_navigateToPageCommand = new RelayCommand(async () =>
         {
-            await SimpleIoc.Default.GetInstance<IXfNavigationService>().NavigateToAsync(ViewModelLocator.NavigatedPageKey, true);
+            await _navigationService.NavigateToAsync(ViewModelLocator.NavigatedPageKey, true);
         }));
 
 
@@ -81,7 +91,7 @@ namespace XfMvvmLight.ViewModel
 
         public RelayCommand ShowMessageCommand => _showMessageCommand ?? (_showMessageCommand = new RelayCommand(async () =>
         {
-            await SimpleIoc.Default.GetInstance<IDialogService>().ShowMessageAsync("Cool... 😎", "You really clicked this button!");
+            await _dialogService.ShowMessageAsync("Cool... 😎", "You really clicked this button!");
         }));
 
 
@@ -98,7 +108,7 @@ namespace XfMvvmLight.ViewModel
             }
             catch (Exception ex)
             {
-                await SimpleIoc.Default.GetInstance<IDialogService>().ShowErrorAsync("Error", ex, "Sorry",
+                await _dialogService.ShowErrorAsync("Error", ex, "Sorry",
                     returnValue =>
                     {
                         Debug.WriteLine($"{nameof(ShowErrorWithExceptionCommand)}'s dialog returns: {returnValue}");
@@ -113,17 +123,17 @@ namespace XfMvvmLight.ViewModel
         public RelayCommand ShowSelectionCommand => _showSelectionCommand ?? (_showSelectionCommand = new RelayCommand(async () =>
         {
 
-            await SimpleIoc.Default.GetInstance<IDialogService>().ShowMessageAsync("Question:",
+            await _dialogService.ShowMessageAsync("Question:",
                 "Do you enjoy this blog series about MVVMLight and Xamarin Forms?", "yeah!", "nope", async returnvalue =>
                 {
                     if (returnvalue)
                     {
-                        await SimpleIoc.Default.GetInstance<IDialogService>()
+                        await _dialogService
                             .ShowMessageAsync("Awesome!", "I am glad you like it");
                     }
                     else
                     {
-                        await SimpleIoc.Default.GetInstance<IDialogService>()
+                        await _dialogService
                             .ShowMessageAsync("Oh no...", "Maybe you could send me some feedback on how to improve it?");
                     }
                 },

@@ -42,6 +42,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Behaviors\BehaviorBase.cs" />
+    <Compile Include="Behaviors\EventToCommandBehavior.cs" />
     <Compile Include="Data\ViewEventBrokerEventArgs.cs" />
     <Compile Include="ServiceImplementations\ViewEventBrokerService.cs" />
     <Compile Include="ServiceImplementations\XfNavigationService.cs" />

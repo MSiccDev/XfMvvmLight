@@ -6,6 +6,7 @@ using System.Text;
 
 using Xamarin.Forms;
 using XfMvvmLight.Abstractions;
+using XfMvvmLight.Behaviors;
 using XfMvvmLight.ViewModel;
 
 namespace XfMvvmLight.BaseControls
@@ -20,8 +21,26 @@ namespace XfMvvmLight.BaseControls
             _viewEventBroker = SimpleIoc.Default.GetInstance<IViewEventBrokerService>();
             _navService = SimpleIoc.Default.GetInstance<IXfNavigationService>();
 
+            this.BindingContextChanged += XfNavContentPage_BindingContextChanged;
         }
 
+        private void XfNavContentPage_BindingContextChanged(object sender, EventArgs e)
+        {
+            if (this.BindingContext is XfNavViewModelBase)
+            {
+                this.Behaviors.Add(new EventToCommandBehavior()
+                {
+                    EventName = "Appearing",
+                    Command = ((XfNavViewModelBase)this.BindingContext).ViewAppearingCommand
+                });
+
+                this.Behaviors.Add(new EventToCommandBehavior()
+                {
+                    EventName = "Disappearing",
+                    Command = ((XfNavViewModelBase)this.BindingContext).ViewDisappearingCommand
+                });
+            }
+        }
 
         public static BindableProperty RegisteredPageKeyProperty = BindableProperty.Create("RegisteredPageKey", typeof(string), typeof(XfNavContentPage), default(string), BindingMode.Default, propertyChanged: OnRegisteredPageKeyChanged);
 
@@ -38,6 +57,7 @@ namespace XfMvvmLight.BaseControls
 
 
         public (bool isRegistered, bool isModal) StackState { get; private set; }
+
 
         protected override void OnAppearing()
         {

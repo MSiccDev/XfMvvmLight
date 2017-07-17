@@ -77,7 +77,7 @@ namespace XfMvvmLight.Behaviors
 
         void Register(string name)
         {
-            if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
                 return;
 
             EventInfo eventInfo = this.AssociatedObject.GetType().GetRuntimeEvent(name);

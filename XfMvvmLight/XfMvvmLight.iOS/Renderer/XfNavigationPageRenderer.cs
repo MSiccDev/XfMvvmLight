@@ -24,6 +24,9 @@ namespace XfMvvmLight.iOS.Renderer
             //making sure to use this only with non-modal pages
             if (Element is XfNavContentPage page && this.NavigationController != null)
             {
+                //disabling back swipe complettely:
+                this.NavigationController.InteractivePopGestureRecognizer.Enabled = false;
+
                 var backarrowImg = UIImage.FromBundle("arrow-back.png").ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
 
                 var backButton = new UIButton(UIButtonType.Custom)

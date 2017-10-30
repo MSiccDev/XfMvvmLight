@@ -32,21 +32,31 @@ namespace XfMvvmLight.ViewModel
 
         private static void RegisterServices()
         {
-            //this one gets the correct service implementation from platform implementation
-            var osService = DependencyService.Get<IOsVersionService>();
+            if (!SimpleIoc.Default.IsRegistered<IOsVersionService>())
+            {
+                //this one gets the correct service implementation from platform implementation
+                var osService = DependencyService.Get<IOsVersionService>();
 
-            // which can be used to register the service class with MVVMLight's Ioc
-            SimpleIoc.Default.Register<IOsVersionService>(() => osService);
+                // which can be used to register the service class with MVVMLight's Ioc
+                SimpleIoc.Default.Register<IOsVersionService>(() => osService);
+            }
 
-            //aaaand... we did it again ;-)
-            var dialogService = DependencyService.Get<IDialogService>();
-            SimpleIoc.Default.Register<IDialogService>(() => dialogService);
+            if (!SimpleIoc.Default.IsRegistered<IDialogService>())
+            {
+                //aaaand... we did it again ;-)
+                var dialogService = DependencyService.Get<IDialogService>();
+                SimpleIoc.Default.Register<IDialogService>(() => dialogService);
+            }
 
+            if (!SimpleIoc.Default.IsRegistered<IXfNavigationService>())
+            {
+                SimpleIoc.Default.Register<IXfNavigationService>(GetPageInstances);
+            }
 
-            SimpleIoc.Default.Register<IXfNavigationService>(GetPageInstances);
-            SimpleIoc.Default.Register<IViewEventBrokerService, ViewEventBrokerService>();
-
-
+            if (!SimpleIoc.Default.IsRegistered<IViewEventBrokerService>())
+            {
+                SimpleIoc.Default.Register<IViewEventBrokerService, ViewEventBrokerService>();
+            }
         }
 
 

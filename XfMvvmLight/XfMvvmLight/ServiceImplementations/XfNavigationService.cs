@@ -139,7 +139,7 @@ namespace XfMvvmLight.ServiceImplementations
 
         public async Task GoBackModalAsync()
         {
-            await _navigationPage.Navigation.PopModalAsync(true);
+           await _navigationPage.Navigation.PopModalAsync(true);
         }
 
         public async Task ShowModalPageAsync(string pageKey, bool animated = true)

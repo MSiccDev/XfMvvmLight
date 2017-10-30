@@ -20,27 +20,17 @@ namespace XfMvvmLight.ViewModel
             _dialogService = SimpleIoc.Default.GetInstance<IDialogService>();
         }
 
-        protected override void OnCorrespondingViewAppearing(object sender, ViewEventBrokerEventArgs e)
-        {
-            base.OnCorrespondingViewAppearing(sender, e);
-        }
+        //public override async void ExecuteViewAppearingCommand()
+        //{
+        //    base.ExecuteViewAppearingCommand();
+        //    await _dialogService.ShowMessageAsync(this.CorrespondingViewKey, $"from overriden {nameof(ExecuteViewAppearingCommand)}");
+        //}
 
-        protected override void OnCorrespondingViewDisappearing(object sender, ViewEventBrokerEventArgs e)
-        {
-            base.OnCorrespondingViewDisappearing(sender, e);
-        }
-
-        public override async void ExecuteViewAppearingCommand()
-        {
-            base.ExecuteViewAppearingCommand();
-            await _dialogService.ShowMessageAsync(this.CorrespondingViewKey, $"from overriden {nameof(ExecuteViewAppearingCommand)}");
-        }
-
-        public override async void ExecuteViewDisappearingCommand()
-        {
-            base.ExecuteViewDisappearingCommand();
-            await _dialogService.ShowMessageAsync(this.CorrespondingViewKey, $"from overriden {nameof(ExecuteViewDisappearingCommand)}");
-        }
+        //public override async void ExecuteViewDisappearingCommand()
+        //{
+        //    base.ExecuteViewDisappearingCommand();
+        //    await _dialogService.ShowMessageAsync(this.CorrespondingViewKey, $"from overriden {nameof(ExecuteViewDisappearingCommand)}");
+        //}
 
 
 
@@ -48,7 +38,7 @@ namespace XfMvvmLight.ViewModel
 
         public RelayCommand GoBackCommand => _goBackCommand ?? (_goBackCommand = new RelayCommand(async () =>
         {
-            await _navService.GoBackModalAsync();
+            await NavService.GoBackModalAsync();
         }));
 
 

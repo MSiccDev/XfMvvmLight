@@ -2,7 +2,7 @@
 <baseCtrl:XfNavContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:baseCtrl="clr-namespace:XfMvvmLight.BaseControls;assembly=XfMvvmLight"
-             x:Class="XfMvvmLight.View.NavigatedPage" RegisteredPageKey="{Binding CorrespondingViewKey}">
+             x:Class="XfMvvmLight.View.NavigatedPage" RegisteredPageKey="{Binding CorrespondingViewKey}" BlockBackNavigation="{Binding BlockBackNavigation}">
 
     <ContentPage.BindingContext>
         <Binding Path="NavigatedPageVm" Source="{StaticResource Locator}" />
@@ -12,7 +12,13 @@
     <ContentPage.Content>
         <StackLayout>
             <Label Text="I am a page that was navigated to!" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" FontSize="Large"/>
-            <Button Text="Go Back" HorizontalOptions="End" Command="{Binding GoBackCommand}"></Button>
+
+            <StackLayout Orientation="Horizontal" Margin="12">
+                <Label Text="Block Back Navigation"></Label>
+                <Switch IsToggled="{Binding BlockBackNavigation, Mode=TwoWay}" HorizontalOptions="EndAndExpand"></Switch>
+            </StackLayout>
+
+            <Button Text="Go Back" HorizontalOptions="End" Command="{Binding GoBackCommand}" Margin="12"></Button>
         </StackLayout>
     </ContentPage.Content>
 </baseCtrl:XfNavContentPage>

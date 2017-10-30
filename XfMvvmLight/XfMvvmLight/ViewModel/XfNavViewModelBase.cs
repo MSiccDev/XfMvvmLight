@@ -6,27 +6,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 using XfMvvmLight.Abstractions;
 
 namespace XfMvvmLight.ViewModel
 {
-    public class XfNavViewModelBase : ViewModelBase
+    public abstract class XfNavViewModelBase : ViewModelBase
     {
-        protected readonly IXfNavigationService _navService;
-        protected readonly IViewEventBrokerService _viewEventBroker;
+        protected readonly IXfNavigationService NavService;
+        protected readonly IViewEventBrokerService ViewEventBroker;
+
 
         private string _correspondingViewKey;
         private RelayCommand _viewAppearingCommand;
         private RelayCommand _viewDisappearingCommand;
+        private bool _blockBackNavigation;
+        private RelayCommand _backButtonPressCanceledCommand;
+        private RelayCommand _backButtonPressedCommand;
 
 
         public XfNavViewModelBase()
         {
-            _navService = SimpleIoc.Default.GetInstance<IXfNavigationService>();
-            _viewEventBroker = SimpleIoc.Default.GetInstance<IViewEventBrokerService>();
-            _viewEventBroker.ViewAppearing += OnCorrespondingViewAppearing;
-            _viewEventBroker.ViewDisAppearing += OnCorrespondingViewDisappearing;
+            NavService = SimpleIoc.Default.GetInstance<IXfNavigationService>();
+            ViewEventBroker = SimpleIoc.Default.GetInstance<IViewEventBrokerService>();
+            ViewEventBroker.ViewAppearing += OnCorrespondingViewAppearing;
+            ViewEventBroker.ViewDisAppearing += OnCorrespondingViewDisappearing;
+
         }
+
+
 
 
         protected virtual void OnCorrespondingViewAppearing(object sender, ViewEventBrokerEventArgs e)
@@ -36,9 +44,6 @@ namespace XfMvvmLight.ViewModel
         protected virtual void OnCorrespondingViewDisappearing(object sender, ViewEventBrokerEventArgs e)
         {
         }
-
-
-
 
 
 
@@ -81,7 +86,7 @@ namespace XfMvvmLight.ViewModel
         {
             if (!string.IsNullOrEmpty(CorrespondingViewKey))
             {
-                var checkIfIsModal = _navService.StackContainsNavKey(CorrespondingViewKey);
+                var checkIfIsModal = NavService.StackContainsNavKey(CorrespondingViewKey);
 
                 if (checkIfIsModal.isRegistered)
                 {
@@ -90,6 +95,49 @@ namespace XfMvvmLight.ViewModel
             }
             return false;
         }
+
+
+
+        //this one allows us to block back navigation in view as well as in ViewModel
+        public virtual bool BlockBackNavigation
+        {
+            get => _blockBackNavigation;
+
+            set => Set(ref _blockBackNavigation, value);
+        }
+
+
+
+        public RelayCommand BackButtonPressCanceledCommand =>
+            _backButtonPressCanceledCommand ?? (_backButtonPressCanceledCommand = new RelayCommand(ExecuteBackButtonPressCanceledCommand, CanExecuteBackButtonPressCanceledCommand));
+
+        public virtual void ExecuteBackButtonPressCanceledCommand()
+        {
+            
+        }
+
+        public virtual bool CanExecuteBackButtonPressCanceledCommand()
+        {
+            return true;
+        }
+
+
+
+
+        public RelayCommand BackButtonPressedCommand =>
+            _backButtonPressedCommand ?? (_backButtonPressedCommand = new RelayCommand(ExecuteBackButtonPressedCommand, CanExecuteBackButtonPressedCommand));
+
+        public virtual void ExecuteBackButtonPressedCommand()
+        {
+
+        }
+
+        public virtual bool CanExecuteBackButtonPressedCommand()
+        {
+            return true;
+        }
+
+
         
     }
 }

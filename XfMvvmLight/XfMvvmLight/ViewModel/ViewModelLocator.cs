@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
 using XfMvvmLight.Abstractions;
 using Xamarin.Forms;
 using XfMvvmLight.View;
@@ -19,15 +18,11 @@ namespace XfMvvmLight.ViewModel
 
         public void Initialize()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-
             RegisterServices();
-
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ModalPageViewModel>();
             SimpleIoc.Default.Register<NavigatedPageViewModel>();
-
         }
 
         private static void RegisterServices()
@@ -74,10 +69,10 @@ namespace XfMvvmLight.ViewModel
 
 
         #region ViewModels
-        public MainViewModel MainVm => ServiceLocator.Current.GetInstance<MainViewModel>();
-        public ModalPageViewModel ModalPageVm => ServiceLocator.Current.GetInstance<ModalPageViewModel>();
+        public MainViewModel MainVm => SimpleIoc.Default.GetInstance<MainViewModel>();
+        public ModalPageViewModel ModalPageVm => SimpleIoc.Default.GetInstance<ModalPageViewModel>();
 
-        public NavigatedPageViewModel NavigatedPageVm => ServiceLocator.Current.GetInstance<NavigatedPageViewModel>();
+        public NavigatedPageViewModel NavigatedPageVm => SimpleIoc.Default.GetInstance<NavigatedPageViewModel>();
 
         #endregion
 

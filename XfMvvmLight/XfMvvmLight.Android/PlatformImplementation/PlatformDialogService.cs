@@ -50,7 +50,7 @@ namespace XfMvvmLight.Droid.PlatformImplementation
         //one method to rule them all
         internal void ShowAlert(string title, string content, string confirmButtonText = null, string cancelButtonText = null, Action<bool> callback = null, bool cancelableOnTouchOutside = false, bool cancelable = false)
         {
-            var alert = new AlertDialog.Builder(Forms.Context);
+            var alert = new AlertDialog.Builder(Android.App.Application.Context);
             alert.SetTitle(title);
             alert.SetMessage(content);
 

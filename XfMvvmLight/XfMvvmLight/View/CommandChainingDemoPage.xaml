@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<baseCtrl:XfNavContentPage
+    xmlns:baseCtrl="clr-namespace:XfMvvmLight.BaseControls" xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ctrl="clr-namespace:XfMvvmLight.Controls;assembly=XfMvvmLight"
+             x:Class="XfMvvmLight.View.CommandChainingDemoPage" RegisteredPageKey="{Binding CommandChainingDemoPageKey, Source=Locator}">
+    <ContentPage.BindingContext>
+        <Binding Path="CommandChainingDemoVm" Source="{StaticResource Locator}" />
+    </ContentPage.BindingContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!--the chained command must be bound as OneWayToSource!-->
+        <ctrl:CommandChainingDemoControl Grid.Row="0" DemoCommand="{Binding InvokeDemoCommand, Mode=OneWayToSource}" Margin="12"></ctrl:CommandChainingDemoControl>
+
+        <Button Text="Execute Command Chaining" Command="{Binding Demo1Command}" Margin="12" Grid.Row="1" />
+
+    </Grid>    
+    
+</baseCtrl:XfNavContentPage>

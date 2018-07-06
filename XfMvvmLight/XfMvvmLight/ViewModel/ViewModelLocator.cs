@@ -23,6 +23,7 @@ namespace XfMvvmLight.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ModalPageViewModel>();
             SimpleIoc.Default.Register<NavigatedPageViewModel>();
+            SimpleIoc.Default.Register<CommandChainingDemoViewModel>();
         }
 
         private static void RegisterServices()
@@ -61,6 +62,7 @@ namespace XfMvvmLight.ViewModel
 
             nav.Configure(ModalPageKey, typeof(ModalPage));
             nav.Configure(NavigatedPageKey, typeof(NavigatedPage));
+            nav.Configure(CommandChainingDemoPageKey, typeof(CommandChainingDemoPage));
 
             return nav;
         }
@@ -74,6 +76,8 @@ namespace XfMvvmLight.ViewModel
 
         public NavigatedPageViewModel NavigatedPageVm => SimpleIoc.Default.GetInstance<NavigatedPageViewModel>();
 
+        public CommandChainingDemoViewModel CommandChainingDemoVm => SimpleIoc.Default.GetInstance<CommandChainingDemoViewModel>();
+
         #endregion
 
 
@@ -84,6 +88,8 @@ namespace XfMvvmLight.ViewModel
         public static string ModalPageKey => nameof(ModalPage);
 
         public static string NavigatedPageKey => nameof(NavigatedPage);
+
+        public static string CommandChainingDemoPageKey => nameof(CommandChainingDemoPage);
 
         #endregion
     }

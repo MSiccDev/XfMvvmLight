@@ -54,8 +54,9 @@
 		<Button Text="Show selection message" Grid.Row="9" Command="{Binding ShowSelectionCommand}" HorizontalOptions="FillAndExpand" BorderColor="Blue" Margin="12"></Button>
 
 
+            <Button Text="Command Chaining Demo" Grid.Row="10" Command="{Binding ShowCommandChainingDemoPage}" HorizontalOptions="FillAndExpand" BorderColor="Blue" Margin="12"/>
 
-	</Grid>
+        </Grid>
 </ScrollView>
 
 

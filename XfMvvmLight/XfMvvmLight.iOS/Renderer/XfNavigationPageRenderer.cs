@@ -15,7 +15,7 @@ using XfMvvmLight.BaseControls;
 [assembly: ExportRenderer(typeof(XfNavContentPage), typeof(XfNavigationPageRenderer))]
 namespace XfMvvmLight.iOS.Renderer
 {
-    public class XfNavigationPageRenderer : PageRenderer
+    public class XfNavigationPageRenderer : PageRenderer, IUIGestureRecognizerDelegate
     {
         public override void ViewWillAppear(bool animated)
         {
@@ -27,55 +27,34 @@ namespace XfMvvmLight.iOS.Renderer
                 var thisPageIndex = page.Navigation.NavigationStack.IndexOf(page);
                 if (thisPageIndex >= 1)
                 {
-                    //disabling back swipe complettely:
-                    this.NavigationController.InteractivePopGestureRecognizer.Enabled = false;
+                    this.NavigationController.TopViewController.NavigationItem.SetLeftBarButtonItem(
+                       new UIBarButtonItem(UIImage.FromBundle("arrow-back.png"), UIBarButtonItemStyle.Plain, OnCustomLeftNavigationBarButtonPressed), true);
 
-                    var backarrowImg = UIImage.FromBundle("arrow-back.png")
-                        .ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-
-                    var backButton = new UIButton(UIButtonType.Custom)
-                    {
-                        HorizontalAlignment = UIControlContentHorizontalAlignment.Left,
-                        TitleEdgeInsets = new UIEdgeInsets(11.5f, 0f, 10f, 0f),
-                        //we need to move the image a bit more left to get closer to the OS-look
-                        ImageEdgeInsets = new UIEdgeInsets(1f, -8f, 0f, 0f)
-                    };
-
-                    //this makes sure we use the same behavior as the OS
-                    //if there is no parent, it must throw an exception because something is wrong
-                    //with the navigation structure
-                    var parent = page.Navigation.NavigationStack[thisPageIndex - 1];
-                    backButton.SetTitle(string.IsNullOrEmpty(parent.Title) ? "Back" : parent.Title,
-                        UIControlState.Normal);
-
-                    backButton.SetTitleColor(this.View.TintColor, UIControlState.Normal);
-                    backButton.SetImage(backarrowImg, UIControlState.Normal);
-                    backButton.SizeToFit();
-
-                    backButton.TouchDown += (sender, e) =>
-                    {
-                        if (!page.BlockBackNavigation)
-                        {
-                            this.NavigationController.PopViewController(animated);
-                        }
-                        page.SendBackButtonPressed();
-                    };
-
-                    backButton.Frame = new CGRect(0, 0, UIScreen.MainScreen.Bounds.Width / 4,
-                        NavigationController.NavigationBar.Frame.Height);
-
-                    var view = new UIView(new CGRect(0, 0, backButton.Frame.Width, backButton.Frame.Height));
-                    view.AddSubview(backButton);
-
-
-                    var backButtonItem = new UIBarButtonItem(string.Empty, UIBarButtonItemStyle.Plain, null)
-                    {
-                        CustomView = backButton
-                    };
-
-                    NavigationController.TopViewController.NavigationItem
-                        .SetLeftBarButtonItem(backButtonItem, animated);
+                    //this is the important one because it makes our click handler work!
+                    this.NavigationController.InteractivePopGestureRecognizer.Delegate = this;
                 }
+            }
+        }
+
+        [Export("gestureRecognizerShouldBegin:")]
+        public bool ShouldBegin(UIGestureRecognizer recognizer)
+        {
+            // admit the pop gesture when the page is not root page
+            if (recognizer == this.NavigationController.InteractivePopGestureRecognizer)
+                return this.NavigationController.ViewControllers.Length > 1;
+
+            return true;
+        }
+
+        //handle the custom back button press
+        private void OnCustomLeftNavigationBarButtonPressed(object sender, EventArgs e)
+        {
+            if (this.Element is XfNavContentPage page)
+            {
+                if (!page.BlockBackNavigation)
+                    this.NavigationController.PopViewController(true);
+                else
+                    page.SendBackButtonPressed();
             }
         }
     }

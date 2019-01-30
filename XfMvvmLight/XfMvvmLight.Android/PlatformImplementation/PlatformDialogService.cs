@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.App;
+using Plugin.CurrentActivity;
 using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
 using XfMvvmLight.Abstractions;
 using XfMvvmLight.Droid.PlatformImplementation;
 
@@ -50,7 +52,8 @@ namespace XfMvvmLight.Droid.PlatformImplementation
         //one method to rule them all
         internal void ShowAlert(string title, string content, string confirmButtonText = null, string cancelButtonText = null, Action<bool> callback = null, bool cancelableOnTouchOutside = false, bool cancelable = false)
         {
-            var alert = new AlertDialog.Builder(Android.App.Application.Context);
+            //major change here, needed to introduce Plugin CurrentActivity
+            var alert = new AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
             alert.SetTitle(title);
             alert.SetMessage(content);
 

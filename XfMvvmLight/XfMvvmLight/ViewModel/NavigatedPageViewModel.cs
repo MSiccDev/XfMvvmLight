@@ -17,7 +17,7 @@ namespace XfMvvmLight.ViewModel
         public NavigatedPageViewModel()
         {
             _dialogService = SimpleIoc.Default.GetInstance<IDialogService>();
-            CorrespondingViewKey = ViewModelLocator.NavigatedPageKey;
+            this.CorrespondingViewKey = ViewModelLocator.NavigatedPageKey;
         }
 
 
@@ -37,7 +37,7 @@ namespace XfMvvmLight.ViewModel
 
         public RelayCommand GoBackCommand => _goBackCommand ?? (_goBackCommand = new RelayCommand(async () =>
         {
-            if (!BlockBackNavigation)
+            if (!this.BlockBackNavigation)
             {
                 await NavService.GoBackAsync();
             }
@@ -47,14 +47,15 @@ namespace XfMvvmLight.ViewModel
         public override async void ExecuteBackButtonPressedCommand()
         {
             await _dialogService.ShowMessageAsync($"Hit {nameof(ExecuteBackButtonPressedCommand)}",
-                $"Back button was pressed, {nameof(BlockBackNavigation)} is set to {BlockBackNavigation}");
+                $"Back button was pressed, {nameof(this.BlockBackNavigation)} is set to {this.BlockBackNavigation}");
+
             base.ExecuteBackButtonPressedCommand();
         }
 
         public override async void ExecuteBackButtonPressCanceledCommand()
         {
             await _dialogService.ShowMessageAsync($"Hit {nameof(ExecuteBackButtonPressCanceledCommand)}",
-                $"Back button was pressed, {nameof(BlockBackNavigation)} is set to {BlockBackNavigation}");
+                $"Back button was pressed, {nameof(this.BlockBackNavigation)} is set to {this.BlockBackNavigation}");
 
             base.ExecuteBackButtonPressCanceledCommand();
         }

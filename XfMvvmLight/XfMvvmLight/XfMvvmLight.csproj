@@ -30,10 +30,10 @@
 
   <ItemGroup>
     <!--MvvmLight has changed, so do we!-->
-    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1" />
+    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <!--needed references-->
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Xamarin.Forms" Version="3.1.0.583944" />
+    <PackageReference Include="Xamarin.Forms" Version="3.4.0.1029999" />
   </ItemGroup>
 
   <ItemGroup>

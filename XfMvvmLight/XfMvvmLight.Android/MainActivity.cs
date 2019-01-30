@@ -9,6 +9,7 @@ using Android.OS;
 using Xamarin.Forms;
 using Application = Android.App.Application;
 using XfMvvmLight.ViewModel;
+using Plugin.CurrentActivity;
 
 namespace XfMvvmLight.Droid
 {
@@ -22,6 +23,8 @@ namespace XfMvvmLight.Droid
 
             base.OnCreate(bundle);
 
+            CrossCurrentActivity.Current.Init(this.Application);
+
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
             ViewModelLocator.Instance.Initialize();
@@ -30,29 +33,29 @@ namespace XfMvvmLight.Droid
         }
 
 
+        //no longer true...
+        ////without this, OnOptionsItemSelected will never get triggered!
+        //protected override void OnPostCreate(Bundle savedInstanceState)
+        //{
+        //    var toolBar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+        //    SetSupportActionBar(toolBar);
 
-        //without this, OnOptionsItemSelected will never get triggered!
-        protected override void OnPostCreate(Bundle savedInstanceState)
-        {
-            var toolBar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolBar);
-
-            base.OnPostCreate(savedInstanceState);
-        }
+        //    base.OnPostCreate(savedInstanceState);
+        //}
 
 
 
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            //if we are not hitting the internal "home" button, just return without any action
-            if (item.ItemId != Android.Resource.Id.Home)
-                return base.OnOptionsItemSelected(item);
+        //public override bool OnOptionsItemSelected(IMenuItem item)
+        //{
+        //    //if we are not hitting the internal "home" button, just return without any action
+        //    if (item.ItemId != Android.Resource.Id.Home)
+        //        return base.OnOptionsItemSelected(item);
 
-            //this one triggers the hardware back button press handler - so we are back in XF without even mentioning it
-            this.OnBackPressed();
-            // return true to signal we have handled everything fine
-            return true;
-        }
+        //    //this one triggers the hardware back button press handler - so we are back in XF without even mentioning it
+        //    this.OnBackPressed();
+        //    // return true to signal we have handled everything fine
+        //    return true;
+        //}
     }
 }
 

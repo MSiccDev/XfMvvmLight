@@ -149,5 +149,14 @@ namespace XfMvvmLight.ViewModel
             await _navigationService.NavigateToAsync(ViewModelLocator.CommandChainingDemoPageKey, true);
         }));
 
+
+        
+
+        private RelayCommand _showActionSheetDemoPage;
+
+        public RelayCommand ShowActionSheetDemoPage => _showActionSheetDemoPage ?? (_showActionSheetDemoPage = new RelayCommand(async () =>
+        {
+            await _navigationService.NavigateToAsync(ViewModelLocator.ActionSheetDemoPageKey, true);
+        }));
     }
 }

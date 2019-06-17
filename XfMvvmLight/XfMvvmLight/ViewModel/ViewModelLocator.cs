@@ -24,6 +24,9 @@ namespace XfMvvmLight.ViewModel
             SimpleIoc.Default.Register<ModalPageViewModel>();
             SimpleIoc.Default.Register<NavigatedPageViewModel>();
             SimpleIoc.Default.Register<CommandChainingDemoViewModel>();
+
+            var actionSheetService = SimpleIoc.Default.GetInstance<IActionSheetService>();
+            SimpleIoc.Default.Register(() => new ActionSheetDemoViewModel(actionSheetService));
         }
 
         private static void RegisterServices()
@@ -53,6 +56,11 @@ namespace XfMvvmLight.ViewModel
             {
                 SimpleIoc.Default.Register<IViewEventBrokerService, ViewEventBrokerService>();
             }
+
+            if (!SimpleIoc.Default.IsRegistered<IActionSheetService>())
+            {
+                SimpleIoc.Default.Register<IActionSheetService, XfActionSheetService>();
+            }
         }
 
 
@@ -63,6 +71,7 @@ namespace XfMvvmLight.ViewModel
             nav.Configure(ModalPageKey, typeof(ModalPage));
             nav.Configure(NavigatedPageKey, typeof(NavigatedPage));
             nav.Configure(CommandChainingDemoPageKey, typeof(CommandChainingDemoPage));
+            nav.Configure(ActionSheetDemoPageKey, typeof(ActionSheetDemoPage));
 
             return nav;
         }
@@ -78,6 +87,8 @@ namespace XfMvvmLight.ViewModel
 
         public CommandChainingDemoViewModel CommandChainingDemoVm => SimpleIoc.Default.GetInstance<CommandChainingDemoViewModel>();
 
+        public ActionSheetDemoViewModel ActionSheetDemoVm => SimpleIoc.Default.GetInstance<ActionSheetDemoViewModel>();
+
         #endregion
 
 
@@ -91,6 +102,7 @@ namespace XfMvvmLight.ViewModel
 
         public static string CommandChainingDemoPageKey => nameof(CommandChainingDemoPage);
 
+        public static string ActionSheetDemoPageKey = nameof(ActionSheetDemoPage);
         #endregion
     }
 }

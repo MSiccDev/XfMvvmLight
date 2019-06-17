@@ -33,11 +33,14 @@
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <!--needed references-->
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Xamarin.Forms" Version="3.4.0.1029999" />
+    <PackageReference Include="Xamarin.Forms" Version="4.0.0.497661" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Controls\CommandChainingDemoControl.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="View\ActionSheetDemoPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="View\CommandChainingDemoPage.xaml">

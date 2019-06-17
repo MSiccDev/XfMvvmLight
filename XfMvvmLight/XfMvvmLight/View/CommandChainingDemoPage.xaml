@@ -1,24 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<baseCtrl:XfNavContentPage
-    xmlns:baseCtrl="clr-namespace:XfMvvmLight.BaseControls" xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:ctrl="clr-namespace:XfMvvmLight.Controls;assembly=XfMvvmLight"
-             x:Class="XfMvvmLight.View.CommandChainingDemoPage" RegisteredPageKey="{Binding CommandChainingDemoPageKey, Source=Locator}">
+<baseCtrl:XfNavContentPage x:Class="XfMvvmLight.View.CommandChainingDemoPage"
+                           xmlns="http://xamarin.com/schemas/2014/forms"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                           xmlns:baseCtrl="clr-namespace:XfMvvmLight.BaseControls"
+                           xmlns:ctrl="clr-namespace:XfMvvmLight.Controls;assembly=XfMvvmLight"
+                           RegisteredPageKey="{Binding CommandChainingDemoPageKey, Source=Locator}">
     <ContentPage.BindingContext>
         <Binding Path="CommandChainingDemoVm" Source="{StaticResource Locator}" />
     </ContentPage.BindingContext>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--the chained command must be bound as OneWayToSource!-->
-        <ctrl:CommandChainingDemoControl Grid.Row="0" DemoCommand="{Binding InvokeDemoCommand, Mode=OneWayToSource}" Margin="12"></ctrl:CommandChainingDemoControl>
+        <!--  the chained command must be bound as OneWayToSource!  -->
+        <ctrl:CommandChainingDemoControl Grid.Row="0"
+                                         Margin="12"
+                                         DemoCommand="{Binding InvokeDemoCommand, Mode=OneWayToSource}" />
 
-        <Button Text="Execute Command Chaining" Command="{Binding Demo1Command}" Margin="12" Grid.Row="1" />
+        <Button Grid.Row="1"
+                Margin="12"
+                Command="{Binding Demo1Command}"
+                Text="Execute Command Chaining" />
 
-    </Grid>    
-    
+    </Grid>
+
 </baseCtrl:XfNavContentPage>
